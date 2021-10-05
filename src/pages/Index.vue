@@ -74,6 +74,7 @@ export default {
   setup () {
     const $q = useQuasar()
     const resultNative = ref(null)
+    const strResult = ref(null)
     const name = ref(null)
     const age = ref(null)
     const accept = ref(false)
@@ -136,25 +137,67 @@ export default {
   },
   methods: {
     actionButton1() {
-      modusecho.echo('Testing Alert');
+      //modusecho.echo('Testing Alert');
+       this.resultNative = strResult;
     },
     actionButton2() {
       var dict = {
         name: this.name,
         age: this.age
       };    
-      //this.resultNative = 'hahahahah';
-      cordova.plugins.cyplugin.add(dict, function() { 
-        this.resultNative = 'hahahahah';
-      }, function(err) { 
-        this.resultNative = 'hahahahah';
-      });
+      var success = function(message) {
+        var delayInMilliseconds = 1000; //1 second
+        setTimeout(function() {
+          printSuccess(message)
+          this.strResult = message
+        }, delayInMilliseconds);
+      }
+      var failure = function(message) {
+        var delayInMilliseconds = 1000; //1 second
+        setTimeout(function() {
+          printSuccess(message)
+          this.strResult = message
+        }, delayInMilliseconds);
+      }
+
+    
+      cordova.plugins.cyplugin.add(dict, success, failure);
+      
     },
     actionButton3(){
-       cordova.plugins.cyplugin.coolMethod('HELLO');
+       var success = function(message) {
+         this.strResult = message
+         printSuccess(message)
+      }
+      var failure = function(message) {
+        printError(message)
+      }
+       cordova.plugins.cyplugin.coolMethod("dict", success, failure);
     },
+    
     actionButton4(){
+      var success = function(message) {
+          //alert(message);//this.resultNative = message;//alert(message);
+         //this.resultNative = message;
+        
+        var delayInMilliseconds = 2000; //1 second
+        setTimeout(function() {
+          printSuccess(message)
+          this.strResult = message
+        }, delayInMilliseconds);
+          
+      }
+
+      var failure = function(message) {
+          alert("Error calling Hello Plugin");
+          printError(message)
+      }
+
      
+      hello.greet("World", success, failure);
+      
+      
+
     },
     
 
@@ -166,4 +209,12 @@ export default {
   },
   
 }
+
+  function printSuccess(message) {
+    console.log("SUCCESS", message)
+  }
+
+  function printError(message) {
+    console.log("ERROR", message)
+  }
 </script>
